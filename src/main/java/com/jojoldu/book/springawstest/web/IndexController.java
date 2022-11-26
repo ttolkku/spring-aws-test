@@ -1,5 +1,6 @@
 package com.jojoldu.book.springawstest.web;
 
+import com.jojoldu.book.springawstest.config.auth.dto.SessionMember;
 import com.jojoldu.book.springawstest.service.PostsService;
 import com.jojoldu.book.springawstest.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -8,15 +9,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
+
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
 
     private final PostsService postsService;
+    private final HttpSession httpSession;
 
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("posts", postsService.findAllDesc());
+        SessionMember member = (SessionMember) httpSession.getAttribute("user");
+        if(member != null) {
+            model.addAttribute("userName", member.getName());
+        }
         return "index";
     }
 
